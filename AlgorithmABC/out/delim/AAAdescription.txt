@@ -1,0 +1,4 @@
+parameters: 'beta','permeability', 'xi','init_days','delay'
+error: log( abs(D_obs - D_sim) + 1)
+mobility: retail_and_recreation_percent_change_from_baseline
+different household sizes

@@ -1,0 +1,4 @@
+/.vscode
+build_linux
+build_win64
+build_macos
