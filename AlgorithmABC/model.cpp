@@ -45,7 +45,7 @@ std::vector<double> MarkovSEIRPD::iterate()
             Pconfinado = 1 - pow((1 - params.beta * rho),params.k_passive);
             sh = pow((1 - rho),(params.sigma - 1));
         }
-        Pcontagio = pt * Pactivo + (1-pt)*(1 - sh * (1 - params.permeability) ) * Pconfinado;
+        Pcontagio = pt * Pactivo + (1-pt)*(1 - sh * (1 - params.permeability)) * Pconfinado;
         
         S_total = params.N - I - E - Pd - D - R;
         
