@@ -22,7 +22,7 @@ On Windows:
 2. Enter folder `build`
 3. Configure CMake files: run `cmake ..`
 4. Build the program: `cmake --build . --config release`
-5. Run the program: `.\main.exe`
+5. Run the program: `.\Release\main.exe`
 
 ### Using g++
 
