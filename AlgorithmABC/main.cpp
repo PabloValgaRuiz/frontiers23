@@ -69,6 +69,7 @@ std::vector<ResultsABC> iterateABC(int max_chosen, const std::string& country){
 int main() {
 Instrumentor::Get().BeginSession("Session Name");
 
+    std::filesystem::create_directory(outPath);
 
     int max_chosen = 1000;
 
@@ -86,7 +87,6 @@ Instrumentor::Get().BeginSession("Session Name");
 
         std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - begin).count() / 1000.0 << std::endl;
         
-        std::filesystem::create_directory(outPath);
         std::ofstream fileValues(std::string{outPath} + "values_" + country + ".txt");
         std::ofstream fileResults(std::string{outPath} + "results_" + country + ".txt");
         std::ofstream fileDead(std::string{outPath} + "dead_" + country + ".txt");
