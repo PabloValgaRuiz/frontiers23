@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <chrono>
 #include <unordered_set>
+#include <filesystem>
 
 #include "pcg/pcg_random.hpp"
 
@@ -19,6 +20,10 @@
 static ThreadPool pool{std::thread::hardware_concurrency()};
 /*To change the number of threads, comment the line above and uncomment the line below with the number of concurrent threads you want*/
 //static ThreadPool pool{4};
+
+/*The path where the results will be saved*/
+constexpr std::string_view outPath{"../out/results_dir/"};
+
 
 
 template<typename Distribution, typename Type>
@@ -80,11 +85,11 @@ Instrumentor::Get().BeginSession("Session Name");
         auto results = iterateABC(max_chosen, country);
 
         std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - begin).count() / 1000.0 << std::endl;
-
-        std::string outPath = "../out/results_dir/";
-        std::ofstream fileValues(outPath + "values_" + country + ".txt");
-        std::ofstream fileResults(outPath + "results_" + country + ".txt");
-        std::ofstream fileDead(outPath + "dead_" + country + ".txt");
+        
+        std::filesystem::create_directory(outPath);
+        std::ofstream fileValues(std::string{outPath} + "values_" + country + ".txt");
+        std::ofstream fileResults(std::string{outPath} + "results_" + country + ".txt");
+        std::ofstream fileDead(std::string{outPath} + "dead_" + country + ".txt");
 
         // fileValues << "beta,permeability,IFR,xi,init_days,delay,value\n";
         fileValues << "beta,permeability,xi,init_days,delay,value\n";
