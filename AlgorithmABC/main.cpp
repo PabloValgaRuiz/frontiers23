@@ -15,11 +15,11 @@
 #include "pcg/pcg_random.hpp"
 
 
-//Compile command
+/*This will use as many threads as the machine has available*/
+static ThreadPool pool{std::thread::hardware_concurrency()};
+/*To change the number of threads, comment the line above and uncomment the line below with the number of concurrent threads you want*/
+//static ThreadPool pool{4};
 
-//g++ ABC.cpp main.cpp model.cpp -I . -o build_linux/main -I vendor -lpthread -std=c++17 -Ofast
-
-static ThreadPool pool{8};
 
 template<typename Distribution, typename Type>
 Distribution CompareResult(const Distribution& priori, Type result){
@@ -37,7 +37,7 @@ std::vector<ResultsABC> iterateABC(int max_chosen, const std::string& country){
     std::vector<ResultsABC> results;
 
     for(int i = 0; i < 2; i++){
-        results = ABC(2e6, n_top, priori, country);
+        results = ABC(2e7, n_top, priori, country);
 
         for(auto& priori_param : priori.map)
             priori_param.second = std::uniform_real_distribution<double>(results[0].params[priori_param.first], results[0].params[priori_param.first]);
@@ -55,7 +55,7 @@ std::vector<ResultsABC> iterateABC(int max_chosen, const std::string& country){
             std::cout << priori_param.first + "_priori: " << priori_param.second.min() << " - " << priori_param.second.max() << std::endl;
     }
 
-    results = ABC(1e7, max_chosen, priori, country);
+    results = ABC(1e8, max_chosen, priori, country);
 
     return results;
 
@@ -81,7 +81,7 @@ Instrumentor::Get().BeginSession("Session Name");
 
         std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - begin).count() / 1000.0 << std::endl;
 
-        std::string outPath = "../out/delim/";
+        std::string outPath = "../out/results_dir/";
         std::ofstream fileValues(outPath + "values_" + country + ".txt");
         std::ofstream fileResults(outPath + "results_" + country + ".txt");
         std::ofstream fileDead(outPath + "dead_" + country + ".txt");
