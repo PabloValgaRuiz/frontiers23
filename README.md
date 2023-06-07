@@ -30,4 +30,4 @@ On Windows:
 2. Enter folder `build`
 3. Command: `g++ ABC.cpp main.cpp model.cpp -I . -o build/main -I vendor -lpthread -std=c++17 -Ofast`
 4. Enter folder `build`
-5. Run the program: `.\Release\main.exe`
+5. Run the program: `./main.exe`
