@@ -7,7 +7,7 @@
 MarkovSEIRPD::MarkovSEIRPD(const Params& _params) : params{_params}{
 
     params.p.insert(params.p.begin(), params.T - params.p.size(), 1.0);
-    
+    params.p_residential.insert(params.p_residential.begin(), params.T - params.p_residential.size(), 1.0);
     I = _params.I_init * _params.N;
     S_h = 0;
     S = _params.N - I;
@@ -18,6 +18,15 @@ MarkovSEIRPD::MarkovSEIRPD(const Params& _params) : params{_params}{
     R = 0;
 }
 
+std::vector<double> calculateCombinatorials(int n){
+    std::vector<double> combinatorials(n);
+    combinatorials[0] = 1;
+    for(int i = 1; i < n; i++){
+        combinatorials[i] = combinatorials[i-1] * (n - i + 1) / i;
+    }
+    return combinatorials;
+}
+
 std::vector<double> MarkovSEIRPD::iterate()
 {
     PROFILE_FUNCTION();
@@ -25,37 +34,44 @@ std::vector<double> MarkovSEIRPD::iterate()
     std::vector<double> daily_dead(params.T);
 
     double Pactivo;
+    double Ppasivo;
     double Pconfinado;
-    double sh;
+    double sh = 1;
     double Pcontagio;
+
+    double k_active = params.k_active;
+    double k_passive = params.k_passive;
+
+    auto probs_I_equals_i = calculateCombinatorials(params.sigma - 1);
 
     for(int t = 0; t < params.T; t++){
 
         double pt = params.p[t] <= 1 ? params.p[t] : 1;
+        double p_residential = params.p_residential[t];
+
+        k_active = params.k_active * pt;
+        k_passive = params.k_passive * p_residential;
 
         double rho = I/params.N;
-        if(rho < 0.0001)
-        {
-            Pactivo = params.k_active * params.beta * rho;
-            Pconfinado = params.k_passive * params.beta * rho;
-            sh = 1 - (params.sigma - 1) * rho;
-        }
-        else {
-            Pactivo = 1 - pow((1 - params.beta * rho), params.k_active);
-            Pconfinado = 1 - pow((1 - params.beta * rho),params.k_passive);
-            sh = pow((1 - rho),(params.sigma - 1));
-        }
-        Pcontagio = pt * Pactivo + (1-pt)*(1 - sh * (1 - params.permeability)) * Pconfinado;
         
+        Pactivo = 1 - pow((1 - params.beta * rho), k_active);
+        Ppasivo = 1 - pow((1 - params.beta * rho),k_passive);
+        Pconfinado = 0;
+        for(int i = 0; i < params.sigma; i++){
+            Pconfinado += probs_I_equals_i[i] * pow(rho, i) * pow(1 - rho, params.sigma - 1 - i) * (1 - pow(1 - params.beta * i / (params.sigma - 1), k_passive));
+        }
+
         S_total = params.N - I - E - Pd - D - R;
-        
-        S_h = S_total * (1 - pt) * sh * (1 - params.permeability);
+        double S_active = S_total * pt;
+        double S_inactive = S_total * (1 - pt) * params.permeability;
+        double S_confined = S_total * (1 - pt) * (1 - params.permeability);
         
         D = params.xi * Pd + D;
         Pd = params.mu * params.IFR * I + (1 - params.xi) * Pd;
         R = params.mu * (1 - params.IFR) * I + R;
         I = params.nu * E + (1 - params.mu) * I;
-        E = S_total * Pcontagio + (1 - params.nu) * E;
+
+        E = S_active * Pactivo + S_inactive * Ppasivo + S_confined * Pconfinado + (1 - params.nu) * E;
 
         daily_dead[t] = params.xi * Pd;
     }
