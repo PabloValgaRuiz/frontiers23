@@ -2,4 +2,3 @@
 build_linux
 build_win64
 build_macos
-conda_env

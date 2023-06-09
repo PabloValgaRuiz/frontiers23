@@ -6,7 +6,7 @@
 #include <unordered_map>
 
 struct FixedParamsABC{
-    std::vector<double> p{}, p_residential{};
+    std::vector<double> p{};
 
     std::unordered_map<std::string,double> map;
 
