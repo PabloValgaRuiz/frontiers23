@@ -55,10 +55,12 @@ std::vector<double> MarkovSEIRPD::iterate()
         double rho = I/params.N;
         
         Pactivo = 1 - pow((1 - params.beta * rho), k_active);
-        Ppasivo = 1 - pow((1 - params.beta * rho),k_passive);
+        Ppasivo = 1 - pow((1 - params.beta * rho), k_passive);
         Pconfinado = 0;
-        for(int i = 1; i < params.sigma; i++){
-            Pconfinado += probs_I_equals_i[i] * pow(rho, i) * pow(1 - rho, params.sigma - 1 - i) * (1 - pow(1 - params.beta * i / (params.sigma - 1), k_passive));
+        if (params.sigma > 2){
+            for(int i = 1; i < params.sigma - 1; i++){
+                Pconfinado += probs_I_equals_i[i] * pow(rho, i) * pow(1 - rho, params.sigma - 1 - i) * (1 - pow(1 - params.beta * i / (params.sigma - 1), k_passive));
+            }
         }
 
         S_total = params.N - I - E - Pd - D - R;
