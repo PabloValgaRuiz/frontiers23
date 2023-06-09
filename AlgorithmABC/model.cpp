@@ -59,6 +59,5 @@ std::vector<double> MarkovSEIRPD::iterate()
 
         daily_dead[t] = params.xi * Pd;
     }
-
     return daily_dead;
 }
