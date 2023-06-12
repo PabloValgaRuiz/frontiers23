@@ -26,6 +26,16 @@ On Windows:
 
 ### Using g++
 
+On MacOS and Linux:
+
 1. Create folder inside `/AlgorithmABC` named `build`
 2. Enter folder `build`
-3. Command: `g++ ABC.cpp main.cpp model.cpp -I . -o build_linux/main -I vendor -lpthread -std=c++17 -Ofast`
+3. Command: `g++ ABC.cpp main.cpp model.cpp -I . -o build/main -I vendor -lpthread -std=c++17 -Ofast`
+4. Run the program: `./main`
+
+On Windows:
+
+1. Create folder inside `/AlgorithmABC` named `build`
+2. Enter folder `build`
+3. Command: `g++ ABC.cpp main.cpp model.cpp -I . -o build/main.exe -I vendor -lpthread -std=c++17 -Ofast`
+4. Run the program: `.\main.exe`
