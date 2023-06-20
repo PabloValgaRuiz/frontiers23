@@ -22,7 +22,7 @@ static ThreadPool pool{std::thread::hardware_concurrency()};
 //static ThreadPool pool{4};
 
 /*The path where the results will be saved*/
-constexpr std::string_view outPath{"../out/new_model/"};
+constexpr std::string_view outPath{"../out/results/"};
 
 
 
@@ -36,7 +36,7 @@ Distribution CompareResult(const Distribution& priori, Type result){
 
 std::vector<ResultsABC> iterateABC(int max_chosen, const std::string& country){
 
-    int n_top = 300;//When choosing the new priori distributions, take the 100 highest values
+    int n_top = 300;//When choosing the new priori distributions, take the 300 highest values
 
     PrioriParametersABC priori{};
     std::vector<ResultsABC> results;

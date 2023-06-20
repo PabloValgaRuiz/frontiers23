@@ -5,9 +5,10 @@
 #include "benchmark.hpp"
 
 MarkovSEIRPD::MarkovSEIRPD(const Params& _params) : params{_params}{
-
-    params.p.insert(params.p.begin(), params.T - params.p.size(), 1.0);
-    params.p_residential.insert(params.p_residential.begin(), params.T - params.p_residential.size(), 1.0);
+    if(_params.T > _params.p.size()){
+        params.p.insert(params.p.begin(), params.T - params.p.size(), 1.0);
+        params.p_residential.insert(params.p_residential.begin(), params.T - params.p_residential.size(), 1.0);
+    }
     I = _params.I_init * _params.N;
     S_h = 0;
     S = _params.N - I;
@@ -31,7 +32,7 @@ std::vector<double> MarkovSEIRPD::iterate()
 {
     PROFILE_FUNCTION();
 
-    std::vector<double> daily_dead(params.T);
+    std::vector<double> daily_dead(params.T, 0);
 
     double Pactivo;
     double Ppasivo;
@@ -42,18 +43,25 @@ std::vector<double> MarkovSEIRPD::iterate()
     double k_active = params.k_active;
     double k_passive = params.k_passive;
 
+    double sigma = round(params.sigma);
+
     auto probs_I_equals_i = calculateCombinatorials(params.sigma - 1);
+
+    int t_init = 0;
+    if(params.T < params.p.size()){
+        t_init = params.p.size() - params.T;
+    }
 
     for(int t = 0; t < params.T; t++){
 
-        double pt = params.p[t] <= 1 ? params.p[t] : 1;
-        double p_residential = params.p_residential[t];
+        double pt = params.p[t + t_init] <= 1 ? params.p[t + t_init] : 1;
+        double p_residential = params.p_residential[t + t_init];
 
         k_active = params.k_active * pt;
         k_passive = params.k_passive * p_residential;
 
         double rho = I/params.N;
-        
+
         Pactivo = 1 - pow((1 - params.beta * rho), k_active);
         Ppasivo = 1 - pow((1 - params.beta * rho), k_passive);
         Pconfinado = 0;
