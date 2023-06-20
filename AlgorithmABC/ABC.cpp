@@ -195,7 +195,10 @@ std::vector<ResultsABC> ABC(int n_simulations, int n_top, PrioriParametersABC pr
         MarkovSEIRPD mkModel{params};
 
         auto D_sim = mkModel.iterate();
-        D_sim.erase(D_sim.begin(), D_sim.begin() + variable["init_days"]);
+        if(variable["init_days"] >= 0)
+            D_sim.erase(D_sim.begin(), D_sim.begin() + (int)floor(variable["init_days"]));
+        else
+            D_sim.insert(D_sim.begin(), -(int)floor(variable["init_days"]), 0); //Add zeros at the beginning (for the negative init_days)
 
         double value = 0;
         for (int i = priori["delay"].max(); i < D_obs.size(); i++) {
