@@ -152,28 +152,12 @@ std::vector<double> readMobility(const std::string& path) {
     }
     return Mob;
 }
-std::vector<double> readMobilityResidential(const std::string& path) {
-    std::ifstream file(path);
-
-    if(!file) std::cerr << "Cannot open mobility file" << std::endl;
-
-    std::string date;
-    double tempMob;
-
-    std::vector<double> Mob;
-
-    while (file >> date >> tempMob) {
-        Mob.push_back(tempMob);
-    }
-    return Mob;
-}
 
 
 
  MarkovSEIRPDParameters buildMarkov(const FixedParamsABC& fixedParamsABC, const VariableParamsABC& variableParamsABC){
     return MarkovSEIRPDParameters{
         fixedParamsABC.p,
-        fixedParamsABC.p_residential,
         fixedParamsABC["I_init"],
         (int)fixedParamsABC["N"],
         fixedParamsABC["k_active"],
@@ -247,7 +231,6 @@ FixedParamsABC::FixedParamsABC(const std::string dataPath, const std::string cou
     auto ks = readContacts(dataPath, country_code);
 
     p = readMobility(dataPath + "mobility/mobility_" + country_code + ".txt");
-    p_residential = readMobilityResidential(dataPath + "mobility_residential/mobility_" + country_code + ".txt");
 
     map["I_init"] = 1.0/pop;
     map["N"] = int(pop);
