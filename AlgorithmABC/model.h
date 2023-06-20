@@ -5,7 +5,7 @@
 
 struct MarkovSEIRPDParameters{
 
-    std::vector<double> p{};
+    std::vector<double> p{}, p_residential{};
     double I_init{};
     int N{};
     double k_active{}, k_passive{}, sigma{}, nu{}, mu{};
