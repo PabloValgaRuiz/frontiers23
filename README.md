@@ -1,4 +1,4 @@
-# frontiers23
+# frontiers23: Socioeconomic determinants of Stay-at-Home Policies during the First COVID-19 Wave
 
 ## Build instructions for the C++ code
 
