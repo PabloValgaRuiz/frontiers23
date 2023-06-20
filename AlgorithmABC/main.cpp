@@ -42,7 +42,7 @@ std::vector<ResultsABC> iterateABC(int max_chosen, const std::string& country){
     std::vector<ResultsABC> results;
 
     for(int i = 0; i < 2; i++){
-        results = ABC(2e7, n_top, priori, country);
+        results = ABC(2e6, n_top, priori, country);
 
         for(auto& priori_param : priori.map)
             priori_param.second = std::uniform_real_distribution<double>(results[0].params[priori_param.first], results[0].params[priori_param.first]);
@@ -60,7 +60,7 @@ std::vector<ResultsABC> iterateABC(int max_chosen, const std::string& country){
             std::cout << priori_param.first + "_priori: " << priori_param.second.min() << " - " << priori_param.second.max() << std::endl;
     }
 
-    results = ABC(1e8, max_chosen, priori, country);
+    results = ABC(1e7, max_chosen, priori, country);
 
     return results;
 
